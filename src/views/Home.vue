@@ -5,9 +5,10 @@
         <div class="title">小真寻的后台捏</div>
       </el-header>
       <el-container class="layoutbox">
-        <el-aside width="220px" class="left-aside">
+        <el-aside :width="isCollapse ? '64px' : '150px'" class="left-aside">
+          <div class="toggle-button" @click="toggleCollapse()">|||</div>
           <el-scrollbar class="myscrollbar">
-            <el-menu @select="handleSelect">
+            <el-menu @select="handleSelect" :collapse="isCollapse" :collapse-transition="false">
               <el-menu-item index="/plugin">
                 <i class="el-icon-menu"></i>
                 <span slot="title">插件列表</span>
@@ -33,11 +34,14 @@
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Home",
-  data() {},
+  data() {
+    return { isCollapse: false };
+  },
   methods: {
     handleSelect(index) {
       this.$router.replace(index);
     },
+    toggleCollapse() {this.isCollapse = !this.isCollapse;},
   },
 };
 </script>
@@ -63,14 +67,21 @@ export default {
   overflow-y: hidden;
 }
 
+.toggle-button {
+  font-size: 10px;
+  line-height: 24px;
+  cursor: pointer;
+}
+
 .myscrollbar {
   height: 100%;
+  text-align: center;
 }
 .myscrollbar >>> .el-scrollbar__wrap {
   overflow-x: hidden;
 }
 .layoutbox {
-  height: 100vh;
+  height: 85vh;
   background-color: #f0f2f5;
 }
 </style>

@@ -8,15 +8,15 @@
       </el-table-column>
       <el-table-column prop="group.group_name" label="群名" width="150">
       </el-table-column>
-      <el-table-column prop="group.member_count" label="成员数" width="150">
+      <el-table-column prop="group.member_count" label="成员数" width="100">
       </el-table-column>
       <el-table-column
         prop="group.max_member_count"
         label="最大成员数"
-        width="150"
+        width="100"
       >
       </el-table-column>
-      <el-table-column prop="level" label="群权限" width="150">
+      <el-table-column prop="level" label="群权限" width="100">
       </el-table-column>
       <el-table-column prop="status" label="状态" width="150">
         <template slot-scope="scope">

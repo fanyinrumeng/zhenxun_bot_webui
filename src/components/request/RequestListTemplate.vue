@@ -6,18 +6,18 @@
     </div>
     <el-table :data="requestList" style="width: 100%">
       <el-table-column prop="oid" label="id" width="50"> </el-table-column>
-      <el-table-column prop="id" label="qq" width="150"> </el-table-column>
+      <el-table-column prop="id" label="qq" width="120"> </el-table-column>
       <el-table-column prop="flag" label="flag" width="170"> </el-table-column>
       <el-table-column prop="nickname" label="昵称" width="150">
       </el-table-column>
-      <el-table-column prop="level" label="等级" width="100"> </el-table-column>
-      <el-table-column label="性别" width="100">
+      <el-table-column prop="level" label="等级" width="50"> </el-table-column>
+      <el-table-column label="性别" width="50">
         <template slot-scope="scope">
           <span v-if="scope.row.sex == 'male'"> 男 </span>
           <span v-else> 女 </span>
         </template>
       </el-table-column>
-      <el-table-column prop="age" label="年龄" width="150"></el-table-column>
+      <el-table-column prop="age" label="年龄" width="80"></el-table-column>
       <el-table-column
         prop="comment"
         label="验证消息"

@@ -11,9 +11,9 @@
         width="200"
       >
       </el-table-column>
-      <el-table-column prop="plugin_manager.author" label="作者" width="150">
+      <el-table-column prop="plugin_manager.author" label="作者" width="100">
       </el-table-column>
-      <el-table-column prop="plugin_manager.version" label="版本" width="110">
+      <el-table-column prop="plugin_manager.version" label="版本">
       </el-table-column>
       <template v-if="pluginType == 'normal'">
         <el-table-column prop="plugin_manager.status" label="插件状态">
@@ -94,7 +94,7 @@
           </template>
         </el-table-column>
       </template>
-      <el-table-column label="操作" width="150">
+      <el-table-column label="操作">
         <template slot-scope="scope" v-if="pluginType == 'normal'">
           <el-button
             v-if="
