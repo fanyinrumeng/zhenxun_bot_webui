@@ -11,7 +11,7 @@
         width="200"
       >
       </el-table-column>
-      <el-table-column prop="plugin_manager.author" label="作者" width="100">
+      <el-table-column prop="plugin_manager.author" label="作者">
       </el-table-column>
       <el-table-column prop="plugin_manager.version" label="版本">
       </el-table-column>
@@ -94,6 +94,15 @@
           </template>
         </el-table-column>
       </template>
+      <el-table-column label="配置项">
+        <template slot-scope="scope">
+          <span v-if="scope.row.plugin_config != null">
+            <el-button size="small" @click="showPluginConfigEditVie(scope.row)"
+              >配置项</el-button
+            >
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope" v-if="pluginType == 'normal'">
           <el-button
@@ -231,6 +240,43 @@
         >
       </span>
     </el-dialog>
+    <el-dialog
+      title="编辑配置项"
+      :visible.sync="configDialogVisible"
+      width="1000px"
+    >
+      <table></table>
+      <el-table :data="pluginData.plugin_config">
+        <el-table-column prop="key" label="键"> </el-table-column>
+        <el-table-column label="值">
+          <template slot-scope="scope">
+            <el-input
+              v-model="pluginData.plugin_config[scope.row.id].value"
+              placeholder="请输入内容"
+              size="small"
+            ></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="help_" label="说明"> </el-table-column>
+        <el-table-column label="默认值">
+          <template slot-scope="scope">
+            <span v-if="scope.row.default_value == true"> True </span>
+            <span v-else-if="scope.row.default_value == false"> False </span>
+            <span v-else>
+              {{ scope.row.default_value }}
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="configDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="doConfigUpdate"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -242,6 +288,7 @@ export default {
     return {
       pluginList: [],
       dialogVisible: false,
+      configDialogVisible: false,
       pluginData: {
         model: "",
         plugin_settings: {
@@ -261,9 +308,11 @@ export default {
           block_type: "all",
         },
         cd_limit: null,
+        plugin_config: [],
         block_limit: null,
         count_limit: null,
       },
+      configsType: [],
       blockType: [
         { value: "all", label: "全部" },
         { value: "group", label: "群组" },
@@ -293,6 +342,32 @@ export default {
         }
       );
     },
+    showPluginConfigEditVie(data) {
+      // 假数据
+      if (data.plugin_settings == null) {
+        data.plugin_settings = {
+          level: 0,
+          default_status: null,
+          limit_superuser: null,
+          cmd: "",
+          cost_gold: 0,
+          plugin_type: "",
+        };
+      }
+      this.pluginData = JSON.parse(JSON.stringify(data));
+      for (var i = 0; i < this.pluginData.plugin_config.length; i++) {
+        if (this.pluginData.plugin_config[i].value instanceof Array) {
+          this.pluginData.plugin_config[i].value =
+            this.pluginData.plugin_config[i].value.join(",");
+          this.configsType.push({ index: i, type: "list" });
+        } else {
+          this.pluginData.plugin_config[i].value = String(
+            this.pluginData.plugin_config[i].value
+          );
+        }
+      }
+      this.configDialogVisible = true;
+    },
     showEditView(data) {
       this.pluginData = JSON.parse(JSON.stringify(data));
       if (
@@ -307,16 +382,54 @@ export default {
       if (this.pluginData.plugin_manager.status) {
         this.pluginData.plugin_manager.block_type = "";
       }
+      this.pluginData.plugin_config = null;
       this.postRequest("/webui/plugins", this.pluginData).then((resp) => {
-        if (resp) {
+        if (resp.code == 200) {
           this.$message({
             message: "修改成功",
             type: "success",
           });
           this.initPluginList();
+        } else {
+          this.$message.error(resp.data);
         }
       });
       this.dialogVisible = false;
+    },
+    doConfigUpdate() {
+      let pluginConfigData = JSON.parse(JSON.stringify(this.pluginData));
+      pluginConfigData.plugin_manager = null;
+      pluginConfigData.plugin_settings = null;
+      for (var i = 0; i < this.configsType.length; i++) {
+        if (
+          this.configsType[i].type == "list" &&
+          !(
+            pluginConfigData.plugin_config[this.configsType[i].index]
+              .value instanceof Array
+          )
+        ) {
+          console.log(
+            pluginConfigData.plugin_config[this.configsType[i].index].value
+          );
+          pluginConfigData.plugin_config[this.configsType[i].index].value =
+            pluginConfigData.plugin_config[
+              this.configsType[i].index
+            ].value.split(",");
+        }
+      }
+      console.log(pluginConfigData);
+      this.postRequest("/webui/plugins", pluginConfigData).then((resp) => {
+        if (resp.code == 200) {
+          this.$message({
+            message: "修改成功",
+            type: "success",
+          });
+          this.initPluginList();
+        } else {
+          this.$message.error(resp.data);
+        }
+      });
+      this.configDialogVisible = false;
     },
   },
 };
