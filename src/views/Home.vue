@@ -21,6 +21,10 @@
                 <i class="el-icon-menu"></i>
                 <span slot="title">请求管理</span>
               </el-menu-item>
+              <el-menu-item index="/system">
+                <i class="el-icon-menu"></i>
+                <span slot="title">系统信息</span>
+              </el-menu-item>
             </el-menu>
           </el-scrollbar>
         </el-aside>
