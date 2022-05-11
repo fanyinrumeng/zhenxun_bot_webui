@@ -2,6 +2,6 @@
     "version": 2,
     "routes": [{
         "src": "/webui/(.*)",
-        "dest": "http://ddns.103107.xyz:7070/webui/$"
+        "dest": "http://ddns.103107.xyz:7070/webui/$1"
     }]
 }
